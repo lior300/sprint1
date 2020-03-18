@@ -1,0 +1,51 @@
+.container {
+  border: 3px solid black;
+  width: 50%;
+  margin: auto;
+}
+.panel {
+  margin: 0px 0px 10px;
+  padding: 10px;
+  background-color: silver;
+}
+
+.panel div {
+  display: inline-block;
+  margin: 0 30px;
+}
+
+.time-panel span {
+  display: block;
+}
+.hint-panel button {
+  display: block;
+}
+.box-right div {
+  display: block;
+}
+
+.board {
+  margin: 0 10px 0;
+}
+
+table {
+  border-spacing: 0px;
+}
+td {
+  text-align: center;
+  font-size: large;
+  font-weight: bold;
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  color: white;
+  box-shadow: inset 0px 0px 22px 23px #868750;
+  background-color: white;
+  transition: box-shadow 300ms linear, color 400ms linear;
+}
+
+.shown {
+  box-shadow: inset 0px 0px 10px 0px #868750;
+  color: black;
+  background-color: rgb(236, 222, 174);
+}

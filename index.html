@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mine-Sweeper</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="initGame()">
+    <div class="container">
+        <div class="panel">
+            <div class="time-panel">
+                <span time-watch>00:00</span>
+            </div>
+
+            <button class="btn-reset">RESET</button>
+
+            <div class="hint-panel">
+                <button class="btn-life">Get Hint</button>
+                <span>Hint</span>
+                <span class="hint-count">3</span>
+            </div>
+
+            <div class="box-right">
+                <div class="life-panel">
+                    <span>Life</span>
+                    <span class="life-count">3</span>
+                </div>
+
+                <div class="mines-panel">
+                    <span>Mines</span>
+                    <span class="mines">20</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="board">
+            <table border="1">
+                <tbody class="board-game"></tbody>
+            </table>
+        </div>
+        <!--END BOARD-->
+    </div>
+    <!--END CONTAINER-->
+    <script src="js/app.js"></script>
+    <script src="js/util.js"></script>
+</body>
+
+</html>
