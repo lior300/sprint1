@@ -12,10 +12,27 @@ function getEmptyPlaces(board) {
         for (var j = 0; j < board[i].length; j++) {
             var cell = board[i][j]
             if (!cell.isShown && !cell.isMine && !cell.isMarked) {
-                emptyPlaces.push({ i, j })
+                if (gStartLoc.i !== i && gStartLoc.j !== j) {
+                    emptyPlaces.push({ i, j })
+                }
             }
         }//END FOR
     }//END FOR
     return emptyPlaces
 }
 
+/** get element of cell by position (object {i, j})*/
+function getElCellByPos(pos) {
+    var elNameclass = '.cell-' + pos.i + '-' + pos.j//Name class of the element
+    return document.querySelector(elNameclass)
+}
+
+/* Get milliseconds - time and returns string of time by the format 00:00 (mm:ss) */
+function milToFormatTime(time) {
+    var s = Math.floor((time / 1000) % 60)//seconds
+    var m = Math.floor(time / (1000 * 60))//minutes
+    //Add '0' before the number if is one-digit number
+    m = (m < 10) ? "0" + m : m;
+    s = (s < 10) ? "0" + s : s;
+    return m + ":" + s;
+}//End milToFormatTime function

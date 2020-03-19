@@ -9,31 +9,47 @@
 </head>
 
 <body onload="initGame()">
-    <div class="container">
-        <div class="panel">
-            <div class="time-panel">
-                <span time-watch>00:00</span>
-            </div>
 
-            <button class="btn-reset">RESET</button>
+    <div align="center" class="container">
 
-            <div class="hint-panel">
-                <button class="btn-life">Get Hint</button>
-                <span>Hint</span>
-                <span class="hint-count">3</span>
-            </div>
+        <div class="level-panel">
+            <span class="header">Levels:</span>
+            <button onclick="onClickBtnLevel(this, 1)">Beginner</button>
+            <button onclick="onClickBtnLevel(this, 2)">Intermediate</button>
+            <button onclick="onClickBtnLevel(this, 3)">Expert</button>
+        </div>
+        <div class="mess-box" align="left">Find all the mines!</div>
 
-            <div class="box-right">
-                <div class="life-panel">
-                    <span>Life</span>
-                    <span class="life-count">3</span>
+        <div class="main-panel">
+            <div class="box-top">
+
+                <div class="hint-panel">
+                    <span class="header">Hint</span>
+                    <div class="hint-count"></div>
                 </div>
+
+                <div class="life-panel">
+                    <div class="header">Lives</div>
+                    <div class="life-count"></div>
+                </div>
+
+            </div>
+
+            <div class="bottom-box">
+                <div class="time-panel">
+                    <div class="header">Time</div>
+                    <div class="time-watch"></div>
+                </div>
+
+                <button class="btn-reset" onclick="onclickResetBtn()"></button>
 
                 <div class="mines-panel">
-                    <span>Mines</span>
-                    <span class="mines">20</span>
+                    <span class="header">Mines</span>
+                    <span class="mines"></span>
                 </div>
+
             </div>
+
         </div>
 
         <div class="board">
@@ -42,8 +58,18 @@
             </table>
         </div>
         <!--END BOARD-->
+
+        <div class="support-life">
+            lives left
+        </div>
+        
     </div>
     <!--END CONTAINER-->
+
+
+    
+
+
     <script src="js/app.js"></script>
     <script src="js/util.js"></script>
 </body>

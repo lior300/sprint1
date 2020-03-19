@@ -1,10 +1,6 @@
 .container {
-  position: relative;
   border: 3px solid black;
-  width: 550px;
-  margin: auto;
 }
-
 .level-panel span {
   font-size: 30px;
   font-weight: bold;
@@ -33,13 +29,7 @@
   transition: background-color 500ms linear;
 }
 .level-panel button:hover {
-  background-color: steelblue;
-}
-.mess-box {
-  margin-bottom: 10px;
-  padding-left: 10px;
-  font-size: 20px;
-  font-weight: bold;
+background-color: steelblue;
 }
 
 .time-panel {
@@ -62,38 +52,25 @@
   cursor: pointer;
 }
 
-.box-top {
-  position: relative;
-  width: 100%;
-  padding: 5px;
-  height: 130px;
-}
-.hint-panel {
-  display: inline-block;
-  position: absolute;
-  left: 5px;
-  top: 0px;
-  margin-left: 10px;
-  margin-right: 50px;
-  padding: 10px;
+.hint-panel{
   border: 1px solid;
+  display: inline-block;
   font-size: 30px;
   font-weight: bold;
   text-align: center;
   width: 200px;
   height: 105px;
+  
 }
-.hint-panel .header {
+.hint-panel .header{
   margin-bottom: 10px;
   text-decoration: underline;
 }
-.hint-count {
+.hint-count{
   margin-top: 10px;
 }
-.life-panel {
-  position: absolute;
-  right: 25px;
-  top: 0px;
+
+.life-panel{
   border: 1px solid;
   display: inline-block;
   font-size: 30px;
@@ -101,12 +78,11 @@
   text-align: center;
   width: 200px;
   height: 105px;
-  padding: 10px;
 }
-.life-panel .header {
+.life-panel .header{
   display: block;
   text-decoration: underline;
-  margin: 5px;
+  margin: 18px;
 }
 
 .btn-reset {
@@ -118,20 +94,11 @@
   height: 60px;
 }
 
-.mines-panel {
+.box-right{
   display: inline-block;
-  border: 3px solid;
-  font-size: x-large;
-  text-align: center;
-  width: 100px;
-  padding: 5px;
-  margin: 10px;
 }
-.mines-panel .header {
-  display: block;
-  font-weight: bold;
-  text-decoration: underline;
-}
+
+
 
 table {
   border-spacing: 0px;
@@ -156,19 +123,3 @@ td {
   background-color: rgb(236, 222, 174);
 }
 
-.support-life {
-  display: none;
-  border: 5px dotted yellowgreen;
-  position: absolute;
-  top: 350px;
-  left: 95px;
-  padding: 25px;
-  width: 300px;
-  height: 30px;
-  margin: auto;
-  text-align: center;
-  font-size: xx-large;
-  background-color: black;
-  color: greenyellow;
-  box-shadow: inset 0px 0px 51px -13px rgba(161, 230, 147, 1);
-}
