@@ -206,7 +206,7 @@ function cellMarked(elCell, iLoc, jLoc, e) {
     document.querySelector('.mines').innerHTML = gMinesLeft
 
     //Checks if have victory
-    if (checkGameOver()) gameOver('Victory!!')
+    if (checkGameOver()) gameOver(messVictor, SUNGLASSES)
 
 
 }
