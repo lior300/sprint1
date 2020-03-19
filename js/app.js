@@ -330,7 +330,7 @@ function hintsRender() {
     var strHTML = ''
     for (var i = 0; i < gHintsCount; i++) {
         strHTML += `<button class="btn-hint" onclick="onclickHintBtn(this)">
-        <img src="../img/hint.png"width="50px" /></button>`
+        <img src="img/hint.png"width="50px" /></button>`
     }
     var elHintCount = document.querySelector('.hint-count')
     elHintCount.innerHTML = strHTML
