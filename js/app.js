@@ -7,7 +7,6 @@ var gBoard;
 var gLevel = { SIZE: 4, MINES: 4 };
 var gMinesCount;
 
-
 /* This is an object in which you can keep and update the current game state: 
  *   isOn – boolean, when true we let the user play 
  *   shownCount: how many cells are shown 
@@ -26,16 +25,22 @@ const SUNGLASSES = '😎'
 
 
 /*GLOBAL VARIABLES*/
-var gIsFirstClick//After the first click on the board will be false
-var gHintsCount//Counter of hints
-var gStartTime//Start game time
+var gIsFirstClick;//After the first click on the board will be false
+var gHintsCount;//Counter of hints
+var gStartTime;//Start game time
 var gBestTime;
 var gCurrTime;
-var gIntervalTimer//For timer
-var gStartLoc//Location of game start
-var isBtnHintClicked//If the player clicked on hint button
+var gIntervalTimer;//For timer
+var gStartLoc;//Location of game start
+var isBtnHintClicked;//If the player clicked on hint button
 var gMinesLeft;//For "DOM" show how many mines left
-var gLifeCount//Life counter
+var gLifeCount;//Life counter
+var gSafeUseCount;
+var gIsSafeModOn;
+var gSafeCell;
+var gFindCellsCount;
+var gIsManuallyModOn;
+var gIsStartGameClicked
 
 //Massages for box-massage
 const messBeginGame = 'Find all the mines!'
@@ -43,20 +48,31 @@ const messFailed = '💥BOOM! BOOM! You failed the mission!!💥'
 const messVictor = 'Well done, You neutralized all the bombs'
 const messBestTime = ' IN THE BEST TIME'
 const messUseHint = 'Click any cell in the board-game to use in the hint'
+const messNoSafe = 'No more safe cells'
+const messUsedAllSafe = 'You used all the safe cells'
+const messManuallyMode = 'Place mines on the board by clicking on cells board, and then click the "START GAME" button to start playing'
 
 /*function*/
 //called when page loads
 function initGame() {
     gGame.isOn = true//If this is "false" the board is locked
     gIsFirstClick = true
+    isBtnHintClicked = false
+    gIsSafeModOn = false
+    gIsManuallyModOn = false
+    gIsStartGameClicked = false
+
     gGame.shownCount = 0
     gGame.markedCount = 0
     gMinesLeft = gLevel.MINES
-    isBtnHintClicked = false
     gHintsCount = 3
     gLifeCount = 3
+    gSafeUseCount = 3
+    gFindCellsCount = 0
+
     gBestTime = getBestTime()
     gBoard = buildBoard()
+
     //Update the DOM
     renderBoard(gBoard)
 
@@ -66,8 +82,15 @@ function initGame() {
     hintsRender()
     renderResetBtn(SIMILE)
     renderBestTime(gBestTime)
+    renderCountSafeMod()
+    renderElement('btn-manually', 'Manually Mod')
     disabledUnableHints(true)//disable the hints
+    restMineCount()
     boxMessage(messBeginGame)
+
+    document.querySelector('.btn-manually').classList.remove('btn-hide')
+    document.querySelector('.box-safe').classList.add('btn-hide')
+    document.querySelector('.btn-undo').classList.add('btn-hide')
 }
 
 //Builds the board Set mines at random locations Call setMinesNegsCount() Return the created board
@@ -146,20 +169,23 @@ function cellClicked(elCell, iLoc, jLoc) {
     if (!gGame.isOn) return
 
     var cell = gBoard[iLoc][jLoc]
-
-    if (cell.isMarked || cell.isShown) return
+    gIsStartGameClicked && (cell.isMarked || cell.isShown)
+    if (gIsStartGameClicked && (cell.isMarked || cell.isShown)) return
 
     if (gIsFirstClick) {
-        gStartLoc = { i: iLoc, j: jLoc }
-        startGame()
-        expandShown(gBoard, elCell, iLoc, jLoc)
-
+        if (!gIsStartGameClicked && gIsManuallyModOn) {
+            putsManuallyMine(iLoc, jLoc, elCell)
+        } else {
+            gStartLoc = { i: iLoc, j: jLoc }
+            startGame()
+            boxMessage(messBeginGame)
+        }
     } else if (isBtnHintClicked) {
         useHint(iLoc, jLoc)
         isBtnHintClicked = false
         boxMessage(messBeginGame)
-
-    } else if (cell.isMine) {
+    }
+    if (cell.isMine && !gIsManuallyModOn) {
         gMinesLeft--
         document.querySelector(".mines").innerHTML = gMinesLeft
         gLifeCount--
@@ -174,11 +200,19 @@ function cellClicked(elCell, iLoc, jLoc) {
             updateBestTime()
             victory()
         }
-    } else {
+    } else if (!gIsManuallyModOn) {
         expandShown(gBoard, elCell, iLoc, jLoc)
         if (checkGameOver()) {
             victory()
         }
+    }
+    if (gIsSafeModOn) {
+        gIsSafeModOn = false
+        gSafeCell.classList.toggle('safe-cell')
+    }
+    else if (gFindCellsCount === 3) {
+        showHideElement('box-safe')
+        gFindCellsCount++
     }
 }
 
@@ -240,6 +274,8 @@ function expandShown(board, elCell, i, j) {
 
     openCell(board, i, j)
 
+    if (gFindCellsCount < 3) gFindCellsCount++
+
     if (cell.minesAroundCount > 0) return
 
     for (var iDiff = i - 1; iDiff <= i + 1; iDiff++) {
@@ -268,8 +304,13 @@ function setRandomMines(board) {
 }
 
 function startGame() {
+
     gIsFirstClick = false
-    setRandomMines(gBoard)
+    if (!gIsManuallyModOn) {
+        showHideElement('btn-manually')
+        setRandomMines(gBoard)
+    } else gIsManuallyModOn = false
+
     setMinesNegsCount(gBoard)
     gStartTime = Date.now()
     gIntervalTimer = setInterval(stopWatch, 1000)
@@ -335,7 +376,7 @@ function hintsRender() {
     var strHTML = ''
     for (var i = 0; i < gHintsCount; i++) {
         strHTML += `<button class="btn-hint" onclick="onclickHintBtn(this)">
-        <img src="img/hint.png" width="45px"/></button>`
+        <img src="img/hint.png" width="40px"/></button>`
     }
     var elHintCount = document.querySelector('.hint-count')
     elHintCount.innerHTML = strHTML
@@ -380,6 +421,21 @@ function lifeRender() {
     elLifeCount.innerHTML = strHTML
 }
 
+//For bonus "manually mine"
+function putsManuallyMine(i, j, elCell) {
+
+    removeAddShown(gBoard, i, j)
+    if (gBoard[i][j].isMine) {
+        elCell.innerText = EMPTY
+        gLevel.MINES--
+    } else {
+        elCell.innerText = MINE
+        gLevel.MINES++
+    }
+    gBoard[i][j].isShown = false
+    gBoard[i][j].isMine = !gBoard[i][j].isMine
+    renderElement('mines', gLevel.MINES)
+}
 
 //For bonus "Best Time"
 function getBestTime() {
@@ -425,6 +481,22 @@ function updateBestTime() {
     }
 }
 
+function renderCountSafeMod() {
+    var elCount = document.querySelector('.count-safe')
+    elCount.innerText = 'Left ' + gSafeUseCount
+}
+
+function restMineCount() {
+    switch (gLevel.SIZE) {
+        case 4: gLevel.MINES = 2
+            break;
+        case 8: gLevel.MINES = 12
+            break;
+        case 12: gLevel.MINES = 30
+    }
+    renderElement("mines", gLevel.MINES)
+}
+
 /**Handlers**/
 function onclickHintBtn(elHint) {
     if (gIsFirstClick) return
@@ -446,18 +518,61 @@ function onclickHintBtn(elHint) {
 function onclickResetBtn() {
     if (gIntervalTimer) clearInterval(gIntervalTimer)
     gIntervalTimer = null
+
     initGame()
 }
 
 function onClickBtnLevel(elBtn, level) {
-    if (level === 1) {
-        gLevel = { SIZE: 4, MINES: 2 }
-    } else if (level === 2) {
-        gLevel = { SIZE: 8, MINES: 12 }
-    } else if (level === 3) {
-        gLevel = { SIZE: 12, MINES: 30 }
+    switch (level) {
+        case 1:
+            gLevel = { SIZE: 4, MINES: 2 }
+            break;
+        case 2:
+            gLevel = { SIZE: 8, MINES: 12 }
+            break;
+        case 3:
+            gLevel = { SIZE: 12, MINES: 30 }
     }
     onclickResetBtn()
+}
+
+//For bonuses
+function onClickBtnSafe() {
+    var emptyCells = getEmptyPlaces(gBoard)
+    if (emptyCells.length < 0) {
+        boxMessage(messNoSafe)
+    } else if (!gIsSafeModOn) {
+        var IdxRandom = getRandomInteger(0, emptyCells.length - 1)
+        var pos = emptyCells[IdxRandom]
+        var cell = getElCellByPos(pos)
+        cell.classList.toggle('safe-cell')
+        gSafeUseCount--
+        renderCountSafeMod()
+        gSafeCell = cell
+        if (!gSafeUseCount) {
+            showHideElement('box-safe')
+            boxMessage(messUsedAllSafe)
+        } else boxMessage('You left ' + gSafeUseCount + ' "Safe" available')
+    }
+    gIsSafeModOn = true
+}
+function onClickBtnManually() {
+    if (gIsManuallyModOn) {
+        document.querySelector('.btn-manually').innerText = 'Manually Mod'
+        showHideElement('btn-manually')
+        gIsStartGameClicked = true
+        renderBoard(gBoard)
+    } else {
+        gIsManuallyModOn = true
+        boxMessage(messManuallyMode)
+        document.querySelector('.btn-manually').innerText = 'START GAME'
+        gLevel.MINES = 0
+        renderElement('mines', gLevel.MINES)
+    }
+
+}
+function onClickBtnUndo() {
+
 }
 
 
@@ -495,7 +610,7 @@ function openCell(board, i, j) {
     if (board[i][j].minesAroundCount > 0) {
         elCell.innerText = board[i][j].minesAroundCount
     }
-    gGame.shownCount++
+    if (!gIsManuallyModOn) gGame.shownCount++
 }
 
 function victory() {
@@ -503,5 +618,19 @@ function victory() {
     if (checkIfBestTime) mess += messBestTime
     gameOver(mess, SUNGLASSES)
     updateBestTime()
+}
+
+function showHideElement(btnClass) {
+    var elBtn = document.querySelector('.' + btnClass)
+    if (!elBtn) {
+        console.log('Function showHideBtn: button not founded')
+        return
+    }
+    elBtn.classList.toggle('btn-hide')
+}
+
+function renderElement(callsName, value) {
+    var el = document.querySelector('.' + callsName)
+    el.innerText = value
 }
 
