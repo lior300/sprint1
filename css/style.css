@@ -32,6 +32,14 @@
   cursor: pointer;
   transition: background-color 500ms linear;
 }
+.best-time {
+  background-color: gold;
+  height: 30px;
+  padding: 2px;
+}
+.best-time h3{
+  margin: 5px 0 0 0;
+}
 .level-panel button:hover {
   background-color: steelblue;
 }
@@ -90,6 +98,15 @@
 .hint-count {
   margin-top: 10px;
 }
+.hint-count button {
+  cursor: pointer;
+  box-shadow: inset 0px 0px 33px 12px rgba(240, 240, 110, 1);
+  transition: background-color 300ms linear;
+}
+.hint-clicked {
+  background-color: yellow;
+}
+
 .life-panel {
   position: absolute;
   right: 25px;

@@ -29,6 +29,8 @@ const SUNGLASSES = '😎'
 var gIsFirstClick//After the first click on the board will be false
 var gHintsCount//Counter of hints
 var gStartTime//Start game time
+var gBestTime;
+var gCurrTime;
 var gIntervalTimer//For timer
 var gStartLoc//Location of game start
 var isBtnHintClicked//If the player clicked on hint button
@@ -39,6 +41,8 @@ var gLifeCount//Life counter
 const messBeginGame = 'Find all the mines!'
 const messFailed = '💥BOOM! BOOM! You failed the mission!!💥'
 const messVictor = 'Well done, You neutralized all the bombs'
+const messBestTime = ' IN THE BEST TIME'
+const messUseHint = 'Click any cell in the board-game to use in the hint'
 
 /*function*/
 //called when page loads
@@ -51,7 +55,7 @@ function initGame() {
     isBtnHintClicked = false
     gHintsCount = 3
     gLifeCount = 3
-
+    gBestTime = getBestTime()
     gBoard = buildBoard()
     //Update the DOM
     renderBoard(gBoard)
@@ -60,10 +64,9 @@ function initGame() {
     document.querySelector('.time-watch').innerText = milToFormatTime(0)
     lifeRender()
     hintsRender()
-    disabledUnableHints(true)//disable the hints
-
     renderResetBtn(SIMILE)
-
+    renderBestTime(gBestTime)
+    disabledUnableHints(true)//disable the hints
     boxMessage(messBeginGame)
 }
 
@@ -154,6 +157,7 @@ function cellClicked(elCell, iLoc, jLoc) {
     } else if (isBtnHintClicked) {
         useHint(iLoc, jLoc)
         isBtnHintClicked = false
+        boxMessage(messBeginGame)
 
     } else if (cell.isMine) {
         gMinesLeft--
@@ -167,12 +171,13 @@ function cellClicked(elCell, iLoc, jLoc) {
         if (!gLifeCount) {
             gameOver(messFailed, SAD)
         } else if (checkGameOver()) {
-            gameOver(messVictor, SUNGLASSES)
+            updateBestTime()
+            victory()
         }
     } else {
         expandShown(gBoard, elCell, iLoc, jLoc)
         if (checkGameOver()) {
-            gameOver(messVictor, SUNGLASSES)
+            victory()
         }
     }
 }
@@ -206,9 +211,9 @@ function cellMarked(elCell, iLoc, jLoc, e) {
     document.querySelector('.mines').innerHTML = gMinesLeft
 
     //Checks if have victory
-    if (checkGameOver()) gameOver(messVictor, SUNGLASSES)
-
-
+    if (checkGameOver()) {
+        victory()
+    }
 }
 
 //Game ends when all mines are marked and all the other cells are shown
@@ -273,13 +278,13 @@ function startGame() {
 
 
 function stopWatch() {
-    var currTime = Date.now();//update the end time
+    gCurrTime = Date.now();//update the end time
     var elTimeWatch = document.querySelector('.time-watch')
-    elTimeWatch.innerHTML = milToFormatTime(currTime - gStartTime)//show the current 
+    elTimeWatch.innerHTML = milToFormatTime(gCurrTime - gStartTime)//show the current 
 }
 
 
-/*Hint function */
+/*Hint functions */
 function useHint(i, j) {
     var cellsOfHints = getAndShowHints(i, j)
     gGame.isOn = false//Lock the board-The game is paused
@@ -330,11 +335,12 @@ function hintsRender() {
     var strHTML = ''
     for (var i = 0; i < gHintsCount; i++) {
         strHTML += `<button class="btn-hint" onclick="onclickHintBtn(this)">
-        <img src="img/hint.png"width="50px" /></button>`
+        <img src="img/hint.png" width="45px"/></button>`
     }
     var elHintCount = document.querySelector('.hint-count')
     elHintCount.innerHTML = strHTML
 }
+//Gets 'true' or 'false' for Disabled or Unable the buttons of hints
 function disabledUnableHints(isDisabled) {
     var elHints = document.querySelectorAll('.btn-hint')
     for (var i = 0; i < elHints.length; i++) {
@@ -347,42 +353,13 @@ function renderResetBtn(face) {
     elBtn.innerText = face
 }
 
+//Gets message and show the message on the box message element
 function boxMessage(mess) {
     var elBoxMess = document.querySelector('.mess-box')
     elBoxMess.innerText = mess
 }
 
 
-/**Handlers**/
-function onclickHintBtn(elHint) {
-    if (gIsFirstClick) return
-    isBtnHintClicked = !isBtnHintClicked
-
-}
-function onclickResetBtn() {
-    if (gIntervalTimer) clearInterval(gIntervalTimer)
-    gIntervalTimer = null
-    initGame()
-}
-function onClickBtnLevel(elBtn, level) {
-    if (level === 1) {
-        gLevel = { SIZE: 4, MINES: 2 }
-    } else if (level === 2) {
-        gLevel = { SIZE: 8, MINES: 12 }
-    } else if (level === 3) {
-        gLevel = { SIZE: 12, MINES: 30 }
-    }
-    onclickResetBtn()
-}
-
-function lifeRender() {
-    var strHTML = ''
-    for (var i = 0; i < gLifeCount; i++) {
-        strHTML += '❤️'
-    }
-    var elLifeCount = document.querySelector('.life-count')
-    elLifeCount.innerHTML = strHTML
-}
 
 //For bonus "Life Support"
 function showLivesSupport() {
@@ -394,6 +371,95 @@ function showLivesSupport() {
         elLifeSupport.style.display = 'none'
     }, 1000)
 }
+function lifeRender() {
+    var strHTML = ''
+    for (var i = 0; i < gLifeCount; i++) {
+        strHTML += '❤️'
+    }
+    var elLifeCount = document.querySelector('.life-count')
+    elLifeCount.innerHTML = strHTML
+}
+
+
+//For bonus "Best Time"
+function getBestTime() {
+    try {
+        if (localStorage.bestTime != null) {
+            var bestTime = localStorage.getItem("bestTime");
+            bestTime = +bestTime
+        } else var bestTime = '--:--'
+    } catch (ex) {
+        var bestTime = '--:--'
+    } finally {
+        return bestTime
+    }
+}
+function checkIfBestTime() {
+    var endTime = gCurrTime - gStartTime
+    if (isNaN(gBestTime) || endTime < gBestTime) {
+        gBestTime = endTime
+        return true
+    }
+    return false
+}
+function saveOnLocalStorageTime(time) {
+    try {
+        localStorage.bestTime = time;
+    } catch (ex) {
+        console.log('Error! Failed to update data in local-storage')
+    }
+}
+function renderBestTime(time) {
+    var elBestTime = document.querySelector('.best-time h3 span')
+    if (!isNaN(time)) {
+        time = milToFormatTime(time)
+    }
+    elBestTime.innerText = ' ' + time
+}
+function updateBestTime() {
+    var time = gCurrTime - gStartTime
+    if (checkIfBestTime()) {
+        renderBestTime(time)
+        saveOnLocalStorageTime(time)
+        gBestTime = time
+    }
+}
+
+/**Handlers**/
+function onclickHintBtn(elHint) {
+    if (gIsFirstClick) return
+
+    //UPDATE DOM
+    if (isBtnHintClicked) {
+        var elHints = document.querySelectorAll('.hint-count button')
+        for (let i = 0; i < elHints.length; i++) {
+            elHints[i].classList.remove('hint-clicked')
+        }
+        boxMessage(messBeginGame)
+    } else {
+        elHint.classList.add('hint-clicked')
+        boxMessage(messUseHint)
+    }
+    isBtnHintClicked = !isBtnHintClicked
+}
+
+function onclickResetBtn() {
+    if (gIntervalTimer) clearInterval(gIntervalTimer)
+    gIntervalTimer = null
+    initGame()
+}
+
+function onClickBtnLevel(elBtn, level) {
+    if (level === 1) {
+        gLevel = { SIZE: 4, MINES: 2 }
+    } else if (level === 2) {
+        gLevel = { SIZE: 8, MINES: 12 }
+    } else if (level === 3) {
+        gLevel = { SIZE: 12, MINES: 30 }
+    }
+    onclickResetBtn()
+}
+
 
 /**Helper functions**/
 function renderCell(i, j, value) {
@@ -432,5 +498,10 @@ function openCell(board, i, j) {
     gGame.shownCount++
 }
 
-
+function victory() {
+    var mess = messVictor
+    if (checkIfBestTime) mess += messBestTime
+    gameOver(mess, SUNGLASSES)
+    updateBestTime()
+}
 
