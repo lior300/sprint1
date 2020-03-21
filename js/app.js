@@ -64,7 +64,6 @@ function initGame() {
 
     gGame.shownCount = 0
     gGame.markedCount = 0
-    gMinesLeft = gLevel.MINES
     gHintsCount = 3
     gLifeCount = 3
     gSafeUseCount = 3
@@ -76,7 +75,7 @@ function initGame() {
     //Update the DOM
     renderBoard(gBoard)
 
-    document.querySelector('.mines').innerHTML = gMinesLeft
+    document.querySelector('.mines').innerHTML = gLevel.MINES
     document.querySelector('.time-watch').innerText = milToFormatTime(0)
     lifeRender()
     hintsRender()
@@ -220,8 +219,7 @@ function cellClicked(elCell, iLoc, jLoc) {
 Search the web(and implement) how to hide the context menu on right click */
 function cellMarked(elCell, iLoc, jLoc, e) {
     e.preventDefault()//Cancel context-menu 
-
-    if (!gGame.isOn) return
+    if (gIsFirstClick || !gGame.isOn) return
 
     var cell = gBoard[iLoc][jLoc]
     if (cell.isShown) return
@@ -262,6 +260,9 @@ function gameOver(mess, btnResFace) {
 
     gGame.isOn = false
     clearInterval(gIntervalTimer)
+
+    document.querySelector('.box-safe').classList.add('btn-hide')//hide button
+    document.querySelector('.btn-undo').classList.add('btn-hide')//hide button
 }
 
 /**When user clicks a cell with no mines around, we need to open not only that cell, but also its neighbors.
@@ -314,7 +315,7 @@ function startGame() {
     gStartTime = Date.now()
     gIntervalTimer = setInterval(stopWatch, 1000)
     disabledUnableHints(false)//disable the hints
-
+    gMinesLeft = gLevel.MINES
 }
 
 
@@ -466,7 +467,6 @@ function getBestTime() {
 function checkIfBestTime() {
     var endTime = gCurrTime - gStartTime
     if (isNaN(gBestTime) || endTime < gBestTime) {
-        gBestTime = endTime
         return true
     }
     return false
