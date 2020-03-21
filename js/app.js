@@ -169,23 +169,22 @@ function cellClicked(elCell, iLoc, jLoc) {
     if (!gGame.isOn) return
 
     var cell = gBoard[iLoc][jLoc]
-    gIsStartGameClicked && (cell.isMarked || cell.isShown)
     if (gIsStartGameClicked && (cell.isMarked || cell.isShown)) return
 
+
     if (gIsFirstClick) {
-        if (!gIsStartGameClicked && gIsManuallyModOn) {
+        if (gIsManuallyModOn && !gIsStartGameClicked) {
             putsManuallyMine(iLoc, jLoc, elCell)
         } else {
             gStartLoc = { i: iLoc, j: jLoc }
             startGame()
             boxMessage(messBeginGame)
         }
-    } else if (isBtnHintClicked) {
+    } if (isBtnHintClicked) {
         useHint(iLoc, jLoc)
         isBtnHintClicked = false
         boxMessage(messBeginGame)
-    }
-    if (cell.isMine && !gIsManuallyModOn) {
+    } else if (cell.isMine && !gIsManuallyModOn) {
         gMinesLeft--
         document.querySelector(".mines").innerHTML = gMinesLeft
         gLifeCount--
@@ -304,7 +303,6 @@ function setRandomMines(board) {
 }
 
 function startGame() {
-
     gIsFirstClick = false
     if (!gIsManuallyModOn) {
         showHideElement('btn-manually')
@@ -440,8 +438,21 @@ function putsManuallyMine(i, j, elCell) {
 //For bonus "Best Time"
 function getBestTime() {
     try {
-        if (localStorage.bestTime != null) {
-            var bestTime = localStorage.getItem("bestTime");
+        var time;
+        switch (gLevel.SIZE) {
+            case 4:
+                time = localStorage.bestTime4
+                break;
+            case 8:
+                time = localStorage.bestTime8
+                break;
+            case 12:
+                time = localStorage.bestTime12
+                break;
+        }
+        var levelGame = gGame.SIZE
+        if (time) {
+            var bestTime = time
             bestTime = +bestTime
         } else var bestTime = '--:--'
     } catch (ex) {
@@ -460,7 +471,17 @@ function checkIfBestTime() {
 }
 function saveOnLocalStorageTime(time) {
     try {
-        localStorage.bestTime = time;
+        switch (gLevel.SIZE) {
+            case 4:
+                localStorage.bestTime4 = time
+                break;
+            case 8:
+                localStorage.bestTime8 = time
+                break;
+            case 12:
+                localStorage.bestTime12 = time
+                break;
+        }
     } catch (ex) {
         console.log('Error! Failed to update data in local-storage')
     }

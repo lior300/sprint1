@@ -1,8 +1,13 @@
+body {
+  background-image: url("../img/background.jpg");
+}
+
 .container {
   position: relative;
   border: 3px solid black;
   width: 550px;
   margin: auto;
+  background-color: wheat;
 }
 
 .level-panel span {
@@ -151,6 +156,8 @@
 }
 
 table {
+  border: 5px solid black;
+  border-radius: 5px;
   border-spacing: 0px;
   margin: 10px;
 }
@@ -210,10 +217,10 @@ td {
   background-color: green;
   display: block;
 }
-.box-safe{
+.box-safe {
   margin-bottom: 5px;
 }
-.box-safe span{
+.box-safe span {
   font-weight: bold;
 }
 
