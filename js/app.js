@@ -169,7 +169,7 @@ function cellClicked(elCell, iLoc, jLoc) {
     if (!gGame.isOn) return
 
     var cell = gBoard[iLoc][jLoc]
-    if (gIsStartGameClicked && (cell.isMarked || cell.isShown)) return
+    if (gIsStartGameClicked && cell.isShown) return
 
 
     if (gIsFirstClick) {
@@ -185,6 +185,7 @@ function cellClicked(elCell, iLoc, jLoc) {
         isBtnHintClicked = false
         boxMessage(messBeginGame)
     } else if (cell.isMine && !gIsManuallyModOn) {
+        if (cell.isShown) return
         gMinesLeft--
         document.querySelector(".mines").innerHTML = gMinesLeft
         gLifeCount--
