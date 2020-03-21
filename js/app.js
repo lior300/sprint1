@@ -18,6 +18,8 @@ var gGame = { isOn: false, shownCount: 0, markedCount: 0, secsPassed: 0 };
 const MINE = '💣'
 const MARK = '🚩'
 const EMPTY = ''
+const CROSS = '❌'
+const V = '✔️'
 
 const SIMILE = '🙂'
 const SAD = '☹️'
@@ -150,10 +152,14 @@ function renderBoard(board) {
             var nameClass = 'class="cell-' + i + '-' + j + '"'
 
             strHTML += `\t<td ${nameClass}  onclick="cellClicked(this, ${i}, ${j})"  oncontextmenu="cellMarked(this,${i}, ${j}, event)">`
-            if (cell.isMine && cell.isShown) {
+
+            if (cell.isMarked && cell.isShown) {
+                if (!cell.isMine) {
+                    strHTML += CROSS
+                } else strHTML += MINE
+            } else if (cell.isMine && cell.isShown) {
                 strHTML += MINE
-            }
-            else if (cell.minesAroundCount > 0 && cell.isShown) {
+            } else if (cell.minesAroundCount > 0 && cell.isShown) {
                 strHTML += cell.minesAroundCount
             }
             strHTML += '</td>\n'
@@ -161,7 +167,6 @@ function renderBoard(board) {
         strHTML += '</tr>\n'
     }
     elBoard.innerHTML = strHTML
-
 }
 
 //Called when a cell (td) is clicked
@@ -186,8 +191,10 @@ function cellClicked(elCell, iLoc, jLoc) {
         boxMessage(messBeginGame)
     } else if (cell.isMine && !gIsManuallyModOn) {
         if (cell.isShown) return
-        gMinesLeft--
-        document.querySelector(".mines").innerHTML = gMinesLeft
+        if (gMinesLeft > 0) {
+            gMinesLeft--
+            document.querySelector(".mines").innerHTML = gMinesLeft
+        }
         gLifeCount--
         lifeRender()
         showLivesSupport()
@@ -195,7 +202,7 @@ function cellClicked(elCell, iLoc, jLoc) {
         openCell(gBoard, iLoc, jLoc)
         renderCell(iLoc, jLoc, MINE)
         if (!gLifeCount) {
-            gameOver(messFailed, SAD)
+            lose()
         } else if (checkGameOver()) {
             updateBestTime()
             victory()
@@ -272,7 +279,7 @@ function gameOver(mess, btnResFace) {
  * (see description at the Bonuses section below) */
 function expandShown(board, elCell, i, j) {
     var cell = board[i][j]
-    if (cell.isShown || cell.isMine) return
+    if (cell.isShown || cell.isMine || cell.isMarked) return
 
     openCell(board, i, j)
 
@@ -631,7 +638,15 @@ function closeCell(board, i, j) {
 function openCell(board, i, j) {
     removeAddShown(board, i, j)
     var elCell = getElCellByPos({ i, j })
-    if (board[i][j].minesAroundCount > 0) {
+    var cell = board[i][j]
+    if (cell.isMarked && !cell.isMine) {
+        elCell.innerText = CROSS
+    } else if (cell.isMarked && cell.isMine) {
+        elCell.innerText = V
+    }
+    else if (cell.isMine) {
+        elCell.innerText = MINE
+    } else if (board[i][j].minesAroundCount > 0) {
         elCell.innerText = board[i][j].minesAroundCount
     }
     if (!gIsManuallyModOn) gGame.shownCount++
@@ -643,6 +658,19 @@ function victory() {
     gameOver(mess, SUNGLASSES)
     updateBestTime()
 }
+function lose() {
+    gameOver(messFailed, SAD)
+    openAllCells()
+}
+function openAllCells() {
+    for (var i = 0; i < gBoard.length; i++) {
+        var row = gBoard[i]
+        for (var j = 0; j < row.length; j++) {
+            if (!row[j].isShown) openCell(gBoard, i, j)
+        }
+    }
+}
+
 
 function showHideElement(btnClass) {
     var elBtn = document.querySelector('.' + btnClass)
