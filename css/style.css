@@ -7,7 +7,7 @@ body {
   border: 3px solid black;
   width: 550px;
   margin: auto;
-  background-color: wheat;
+  background-color: honeydew;
 }
 
 .level-panel span {
@@ -23,7 +23,6 @@ body {
   background-color: royalblue;
   border-bottom: 3px solid black;
   padding: 10px;
-  margin-bottom: 10px;
 }
 .level-panel button {
   background-color: cornflowerblue;
@@ -49,10 +48,14 @@ body {
   background-color: steelblue;
 }
 .mess-box {
+  border-bottom: 3px solid;
   margin-bottom: 10px;
-  padding-left: 10px;
+  padding: 5px 10px 5px 10px;
   font-size: 20px;
   font-weight: bold;
+  background-color: rgb(255, 255, 255);
+
+
 }
 
 .time-panel {
@@ -63,38 +66,36 @@ body {
   width: 100px;
   padding: 5px;
   margin: 10px;
+  background-color: lightskyblue;
 }
 .time-panel .header {
   font-weight: bold;
   text-decoration: underline;
 }
 
-.btn-reset {
-  margin: 10px;
-  padding: 1px;
-  cursor: pointer;
-}
+
 
 .box-top {
   position: relative;
   width: 100%;
   padding: 5px;
-  height: 130px;
+  height: 100px;
 }
 .hint-panel {
   display: inline-block;
   position: absolute;
   left: 5px;
   top: 0px;
-  margin-left: 10px;
+  margin-left: 25px;
   margin-right: 50px;
   padding: 10px;
   border: 1px solid;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
   text-align: center;
-  width: 180px;
-  height: 105px;
+  width: 130px;
+  height: 80px;
+  background-color: lightskyblue;
 }
 .hint-panel .header {
   margin-bottom: 10px;
@@ -114,16 +115,17 @@ body {
 
 .life-panel {
   position: absolute;
-  right: 25px;
+  right: 40px;
   top: 0px;
   border: 1px solid;
   display: inline-block;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
   text-align: center;
-  width: 180px;
-  height: 105px;
+  width: 130px;
+  height: 80px;
   padding: 10px;
+  background-color: lightskyblue;
 }
 .life-panel .header {
   display: block;
@@ -148,6 +150,7 @@ body {
   width: 100px;
   padding: 5px;
   margin: 10px;
+  background-color: lightskyblue;
 }
 .mines-panel .header {
   display: block;
@@ -159,7 +162,7 @@ table {
   border: 5px solid black;
   border-radius: 5px;
   border-spacing: 0px;
-  margin: 10px;
+  margin: 0px 10px 10px 10px;
 }
 td {
   text-align: center;
@@ -206,9 +209,9 @@ td {
   margin-top: 0px;
   border: 2px solid;
   border-radius: 3px;
-  width: 100px;
-  height: 60px;
-  font-size: 20px;
+  width: 90px;
+  height: 55px;
+  font-size: 18px;
   font-weight: bold;
   padding: 5px;
   cursor: pointer;
@@ -217,9 +220,7 @@ td {
   background-color: green;
   display: block;
 }
-.box-safe {
-  margin-bottom: 5px;
-}
+
 .box-safe span {
   font-weight: bold;
 }
@@ -227,6 +228,7 @@ td {
 .btn-undo {
   background-color: crimson;
   display: block;
+  margin-bottom: 5px;
 }
 .btn-safe {
   margin-bottom: 0px;
@@ -240,4 +242,12 @@ td {
 .safe-cell {
   background-color: red;
   box-shadow: 0px 0px 0px -200px rgba(255, 255, 255, 0);
+}
+
+.btn-reset {
+  border: 3px solid;
+  position: relative;
+  bottom: 7px;
+  cursor: pointer;
+  background-color: white;
 }

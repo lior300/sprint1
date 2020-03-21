@@ -88,9 +88,10 @@ function initGame() {
     restMineCount()
     boxMessage(messBeginGame)
 
-    document.querySelector('.btn-manually').classList.remove('btn-hide')
-    document.querySelector('.box-safe').classList.add('btn-hide')
-    document.querySelector('.btn-undo').classList.add('btn-hide')
+    //Reset buttons
+    document.querySelector('.btn-manually').classList.remove('btn-hide')//shoe button
+    document.querySelector('.box-safe').classList.add('btn-hide')//hide button
+    document.querySelector('.btn-undo').classList.add('btn-hide')//hide button
 }
 
 //Builds the board Set mines at random locations Call setMinesNegsCount() Return the created board
@@ -313,6 +314,7 @@ function startGame() {
     gStartTime = Date.now()
     gIntervalTimer = setInterval(stopWatch, 1000)
     disabledUnableHints(false)//disable the hints
+
 }
 
 
@@ -374,7 +376,7 @@ function hintsRender() {
     var strHTML = ''
     for (var i = 0; i < gHintsCount; i++) {
         strHTML += `<button class="btn-hint" onclick="onclickHintBtn(this)">
-        <img src="img/hint.png" width="40px"/></button>`
+        <img src="img/hint.png" width="27px"/></button>`
     }
     var elHintCount = document.querySelector('.hint-count')
     elHintCount.innerHTML = strHTML
@@ -636,7 +638,7 @@ function openCell(board, i, j) {
 
 function victory() {
     var mess = messVictor
-    if (checkIfBestTime) mess += messBestTime
+    if (checkIfBestTime()) mess += messBestTime
     gameOver(mess, SUNGLASSES)
     updateBestTime()
 }
