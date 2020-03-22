@@ -20,6 +20,7 @@ const MARK = '🚩'
 const EMPTY = ''
 const CROSS = '❌'
 const V = '✔️'
+const BOOM = '💥'
 
 const SIMILE = '🙂'
 const SAD = '☹️'
@@ -202,6 +203,7 @@ function cellClicked(elCell, iLoc, jLoc) {
         openCell(gBoard, iLoc, jLoc)
         renderCell(iLoc, jLoc, MINE)
         if (!gLifeCount) {
+            renderCell(iLoc, jLoc, BOOM)
             lose()
         } else if (checkGameOver()) {
             updateBestTime()
